@@ -1,0 +1,217 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:todo_app_firebase/main.dart';
+import 'package:todo_app_firebase/modules/add_todo_page.dart';
+import 'package:todo_app_firebase/modules/view_todo_page.dart';
+import 'package:todo_app_firebase/services/auth_services.dart';
+import 'package:todo_app_firebase/widgets/custom_widget.dart';
+import 'package:todo_app_firebase/widgets/todo_card.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final authServices = AuthServices();
+  late User? user;
+  Future<void> getUserData() async {
+    User? userData = FirebaseAuth.instance.currentUser;
+    setState(() {
+      user = userData;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserData();
+  }
+
+  Stream<QuerySnapshot> _stream =
+      FirebaseFirestore.instance.collection("Todo").snapshots();
+  String idTodo = "";
+  @override
+  Widget build(BuildContext context) {
+    getUserData();
+    _stream = FirebaseFirestore.instance
+        .collection("Todo")
+        .where("uid", isEqualTo: "${user!.uid}")
+        .snapshots();
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: gradientBgColors(),
+          ),
+        ),
+        title: Text(
+          "Today's Schedule",
+          style: TextStyle(
+            fontSize: 33,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            gradient: gradientBgColors(),
+          ),
+          child: StreamBuilder(
+              stream: _stream,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> document = snapshot.data!.docs[index]
+                          .data() as Map<String, dynamic>;
+
+                      return InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (builder) => ViewTodoPage(
+                                        document: document,
+                                        id: snapshot.data!.docs[index].id,
+                                      )));
+                        },
+                        child: TodoCard(
+                          title: document["title"],
+                          iconButton: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                idTodo = snapshot.data!.docs[index].id;
+                              });
+                              FirebaseFirestore.instance
+                                  .collection("Todo")
+                                  .doc(idTodo)
+                                  .delete();
+                            },
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                          ),
+                          checkBox: Checkbox(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            activeColor: Color.fromARGB(158, 139, 155, 225),
+                            checkColor: Colors.white,
+                            value: document["status"],
+                            onChanged: (value) {
+                              bool flag = !document["status"];
+                              setState(() {
+                                idTodo = snapshot.data!.docs[index].id;
+                              });
+                              FirebaseFirestore.instance
+                                  .collection("Todo")
+                                  .doc(idTodo)
+                                  .update(
+                                {
+                                  "uid": document["uid"],
+                                  "title": document["title"],
+                                  "description": document["description"],
+                                  "status": flag
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    });
+              }),
+        ),
+      ),
+      bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            gradient: gradientBgColors(),
+          ),
+          child: BottomNavigationBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            items: [
+              BottomNavigationBarItem(
+                icon: InkWell(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (builder) => HomePage()),
+                        (route) => false);
+                  },
+                  child: Icon(
+                    Icons.home,
+                    size: 32,
+                    color: Colors.white,
+                  ),
+                ),
+                label: "",
+              ),
+              BottomNavigationBarItem(
+                icon: InkWell(
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (builder) => AddTodoPage()));
+                  },
+                  child: Container(
+                    height: 70,
+                    width: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.indigoAccent,
+                          Colors.purpleAccent,
+                        ],
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      size: 32,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                label: "",
+              ),
+              BottomNavigationBarItem(
+                icon: InkWell(
+                  onTap: () async {
+                    try {
+                      await authServices.signOut();
+                    } on FirebaseAuthException catch (e) {
+                      final snackbar =
+                          SnackBar(content: Text(e.message.toString()));
+                      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+                    }
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (builder) => MyApp()),
+                        (route) => false);
+                  },
+                  child: Icon(
+                    Icons.logout,
+                    size: 32,
+                    color: Colors.white,
+                  ),
+                ),
+                label: "",
+              )
+            ],
+          )),
+    );
+  }
+}
