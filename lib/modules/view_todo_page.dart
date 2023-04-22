@@ -14,7 +14,7 @@ class ViewTodoPage extends StatefulWidget {
 
 class _ViewTodoPageState extends State<ViewTodoPage> {
   late TextEditingController _titleController;
-  late TextEditingController _desController = TextEditingController();
+  late TextEditingController _desController;
   bool circular = false;
   bool edit = false;
   late User? user;
