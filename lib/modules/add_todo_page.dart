@@ -77,8 +77,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                           SizedBox(
                             height: 20,
                           ),
-                          customTitle(
-                              "Description", _tilteController, true, context),
+                          customTitle("Title", _tilteController, true, context),
                           SizedBox(
                             height: 20,
                           ),
