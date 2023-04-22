@@ -13,7 +13,7 @@ class ViewTodoPage extends StatefulWidget {
 }
 
 class _ViewTodoPageState extends State<ViewTodoPage> {
-  late TextEditingController _tilteController;
+  late TextEditingController _titleController;
   late TextEditingController _desController = TextEditingController();
   bool circular = false;
   bool edit = false;
@@ -28,7 +28,7 @@ class _ViewTodoPageState extends State<ViewTodoPage> {
   @override
   void initState() {
     super.initState();
-    _tilteController = TextEditingController(text: widget.document["title"]);
+    _titleController = TextEditingController(text: widget.document["title"]);
     _desController =
         TextEditingController(text: widget.document["description"]);
     getUserData();
@@ -90,12 +90,11 @@ class _ViewTodoPageState extends State<ViewTodoPage> {
                           SizedBox(
                             height: 20,
                           ),
-                          customLabel("Task Tilte"),
+                          customLabel("Task Title"),
                           SizedBox(
                             height: 20,
                           ),
-                          customTitle(
-                              "Description", _tilteController, edit, context),
+                          customTitle("Title", _titleController, edit, context),
                           SizedBox(
                             height: 20,
                           ),
@@ -121,7 +120,7 @@ class _ViewTodoPageState extends State<ViewTodoPage> {
   Widget customButton() {
     return InkWell(
       onTap: () async {
-        if (_tilteController.text.isNotEmpty &&
+        if (_titleController.text.isNotEmpty &&
             _desController.text.isNotEmpty) {
           setState(() {
             circular = true;
@@ -132,7 +131,7 @@ class _ViewTodoPageState extends State<ViewTodoPage> {
                 .doc(widget.id)
                 .update({
               "uid": widget.document["uid"],
-              "title": _tilteController.text,
+              "title": _titleController.text,
               "description": _desController.text,
               "status": widget.document["status"]
             });

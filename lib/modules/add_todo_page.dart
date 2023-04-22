@@ -11,7 +11,7 @@ class AddTodoPage extends StatefulWidget {
 }
 
 class _AddTodoPageState extends State<AddTodoPage> {
-  final TextEditingController _tilteController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _desController = TextEditingController();
   bool circular = false;
   late User? user;
@@ -77,7 +77,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                           SizedBox(
                             height: 20,
                           ),
-                          customTitle("Title", _tilteController, true, context),
+                          customTitle("Title", _titleController, true, context),
                           SizedBox(
                             height: 20,
                           ),
@@ -104,7 +104,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
     getUserData();
     return InkWell(
       onTap: () async {
-        if (_tilteController.text.isNotEmpty &&
+        if (_titleController.text.isNotEmpty &&
             _desController.text.isNotEmpty) {
           setState(() {
             circular = true;
@@ -112,7 +112,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
           try {
             FirebaseFirestore.instance.collection("Todo").add({
               "uid": "${user?.uid}",
-              "title": _tilteController.text,
+              "title": _titleController.text,
               "description": _desController.text,
               "status": false,
             });
