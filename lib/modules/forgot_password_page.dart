@@ -19,12 +19,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
         appBar: AppBar(
           flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [
-                Color.fromARGB(255, 108, 209, 253),
-                Color.fromARGB(255, 104, 190, 255),
-                Color.fromARGB(255, 108, 161, 253)
-              ]),
+            decoration: BoxDecoration(
+              gradient: gradientBgColors(),
             ),
           ),
           elevation: 0,

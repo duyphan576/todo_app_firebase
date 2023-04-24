@@ -115,7 +115,7 @@ Widget customTextForm(String labeltext, TextEditingController controller,
 }
 
 LinearGradient gradientButtonColors() {
-  return const LinearGradient(colors: [
+  return LinearGradient(colors: [
     Color.fromARGB(255, 108, 166, 253),
     Color.fromARGB(255, 104, 137, 255),
     Color.fromARGB(255, 108, 139, 253)
