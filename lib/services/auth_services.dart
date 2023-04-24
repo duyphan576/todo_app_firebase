@@ -19,11 +19,14 @@ class AuthServices {
   void storeTokenAndData(UserCredential userCredential) async {
     await storage.write(
         key: "token", value: auth.currentUser!.getIdToken().toString());
-    await storage.write(
-        key: "usercredential", value: auth.currentUser.toString());
+    await storage.write(key: "usercredential", value: auth.currentUser?.email);
   }
 
   Future<String?> getToken() async {
     return await storage.read(key: "token");
+  }
+
+  Future<String?> getUser() async {
+    return await storage.read(key: "usercredential");
   }
 }

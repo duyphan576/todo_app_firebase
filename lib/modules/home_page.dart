@@ -18,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final authServices = AuthServices();
   late User? user;
+  late String userEmail;
   Future<void> getUserData() async {
     User? userData = FirebaseAuth.instance.currentUser;
     setState(() {
@@ -30,6 +31,18 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     getUserData();
+    checkCurrentUser();
+  }
+
+  Future<void> checkCurrentUser() async {
+    String? currentUser = await authServices.getUser();
+    if (currentUser != null) {
+      setState(() {
+        userEmail = currentUser;
+      });
+    } else {
+      userEmail = "";
+    }
   }
 
   Stream<QuerySnapshot> _stream =
@@ -38,6 +51,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     getUserData();
+    checkCurrentUser();
+    print(userEmail.toString());
     _stream = FirebaseFirestore.instance
         .collection("Todo")
         .where("uid", isEqualTo: "${user!.uid}")
@@ -50,9 +65,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         title: Text(
-          "Today's Schedule",
+          userEmail.isNotEmpty
+              ? "Todo's Schedule of $userEmail"
+              : "Todo's Schedule",
           style: TextStyle(
-            fontSize: 33,
+            fontSize: 10,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
