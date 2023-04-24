@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app_firebase/widgets/custom_widget.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -58,11 +59,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   const SizedBox(
                     height: 40,
                   ),
-                  textItem("Email", _emailController, false),
+                  customTextForm("Email", _emailController, false, context),
                   const SizedBox(
                     height: 40,
                   ),
-                  colorButton(),
+                  customButton(),
                 ],
               ),
             ),
@@ -70,45 +71,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ));
   }
 
-  Widget textItem(
-      String labeltext, TextEditingController controller, bool obscureText) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width - 70,
-      height: 55,
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscureText,
-        style: const TextStyle(
-          fontSize: 17,
-          color: Colors.black,
-        ),
-        decoration: InputDecoration(
-          labelText: labeltext,
-          labelStyle: const TextStyle(
-            fontSize: 17,
-            color: Colors.black,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(
-              width: 1.5,
-              color: Colors.indigoAccent.shade700,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(15),
-            borderSide: const BorderSide(
-              width: 1,
-              color: Colors.indigoAccent,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget colorButton() {
-    String errorMessage;
+  Widget customButton() {
     return InkWell(
       onTap: () async {
         setState(() {
@@ -123,10 +86,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           setState(() {
             circular = false;
           });
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (builder) => HomePage()),
-          // );
         } on FirebaseAuthException catch (e) {
           final snackbar = SnackBar(content: Text(e.message.toString()));
           ScaffoldMessenger.of(context).showSnackBar(snackbar);
@@ -140,11 +99,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: const LinearGradient(colors: [
-            Color.fromARGB(255, 108, 166, 253),
-            Color.fromARGB(255, 104, 137, 255),
-            Color.fromARGB(255, 108, 139, 253)
-          ]),
+          gradient: gradientButtonColors(),
         ),
         child: Center(
           child: circular

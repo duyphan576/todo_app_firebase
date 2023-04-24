@@ -10,6 +10,7 @@ class AuthServices {
     try {
       await auth.signOut();
       await storage.delete(key: "token");
+      await storage.delete(key: "usercredential");
     } on FirebaseAuthException catch (e) {
       final snackBar = SnackBar(content: Text(e.message.toString()));
       ScaffoldMessenger.of(context!).showSnackBar(snackBar);

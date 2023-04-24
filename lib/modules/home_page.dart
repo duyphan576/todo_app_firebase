@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final authServices = AuthServices();
   late User? user;
-  late String userEmail;
+  String? userEmail;
   Future<void> getUserData() async {
     User? userData = FirebaseAuth.instance.currentUser;
     setState(() {
@@ -52,10 +52,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     getUserData();
     checkCurrentUser();
-    print(userEmail.toString());
     _stream = FirebaseFirestore.instance
         .collection("Todo")
-        .where("uid", isEqualTo: "${user!.uid}")
+        .where("uid", isEqualTo: user!.uid)
         .snapshots();
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +64,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         title: Text(
-          userEmail.isNotEmpty
+          userEmail != null
               ? "Todo's Schedule of $userEmail"
               : "Todo's Schedule",
           style: TextStyle(
