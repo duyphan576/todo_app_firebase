@@ -34,7 +34,6 @@ class _MyAppState extends State<MyApp> {
 
   checkLogin() async {
     String? token = await authServices.getToken();
-    String? user = await authServices.getUser();
     if (token != null) {
       setState(() {
         currentPage = HomePage();
