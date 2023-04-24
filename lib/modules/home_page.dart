@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
               ? "Todo's Schedule of $userEmail"
               : "Todo's Schedule",
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 16,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
