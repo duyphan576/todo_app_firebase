@@ -21,9 +21,11 @@ class _HomePageState extends State<HomePage> {
   String? userEmail;
   Future<void> getUserData() async {
     User? userData = FirebaseAuth.instance.currentUser;
-    setState(() {
-      user = userData;
-    });
+    if (userData != null) {
+      setState(() {
+        user = userData;
+      });
+    }
   }
 
   @override
@@ -40,8 +42,6 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         userEmail = currentUser;
       });
-    } else {
-      userEmail = "";
     }
   }
 
@@ -208,6 +208,9 @@ class _HomePageState extends State<HomePage> {
                   onTap: () async {
                     try {
                       await authServices.signOut();
+                      setState(() {
+                        userEmail = "";
+                      });
                     } on FirebaseAuthException catch (e) {
                       final snackbar =
                           SnackBar(content: Text(e.message.toString()));

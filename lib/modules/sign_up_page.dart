@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:todo_app_firebase/modules/sign_in_page.dart';
 import 'package:todo_app_firebase/widgets/custom_widget.dart';
-
-import 'home_page.dart';
-import 'sign_in_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -117,7 +115,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 MaterialPageRoute(builder: (builder) => SignInPage()),
                 (route) => false);
             final snackbar = SnackBar(
-                content: Text("Use your newly created account to sign in"));
+                content: Text(""));
             ScaffoldMessenger.of(context).showSnackBar(snackbar);
           } on FirebaseAuthException catch (e) {
             final snackbar = SnackBar(content: Text(e.message.toString()));
