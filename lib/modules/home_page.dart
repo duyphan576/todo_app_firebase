@@ -19,14 +19,6 @@ class _HomePageState extends State<HomePage> {
   final authServices = AuthServices();
   late User? user;
   String? userEmail;
-  Future<void> getUserData() async {
-    User? userData = FirebaseAuth.instance.currentUser;
-    if (userData != null) {
-      setState(() {
-        user = userData;
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -34,6 +26,15 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     getUserData();
     checkCurrentUser();
+  }
+
+  Future<void> getUserData() async {
+    User? userData = FirebaseAuth.instance.currentUser;
+    if (userData != null) {
+      setState(() {
+        user = userData;
+      });
+    }
   }
 
   Future<void> checkCurrentUser() async {
@@ -45,6 +46,8 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // Khai báo biến _stream để chứa các snapshot đã thu thập được
+  // thông qua collection có tên Todo được lưu trên Firestore Database
   Stream<QuerySnapshot> _stream =
       FirebaseFirestore.instance.collection("Todo").snapshots();
   String idTodo = "";
@@ -89,8 +92,11 @@ class _HomePageState extends State<HomePage> {
                   return Center(child: CircularProgressIndicator());
                 }
                 return ListView.builder(
+                    // Xác định itemCount của ListView bằng độ dài của snapshot,
+                    // trong trường hợp này là độ dài của _stream
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
+                      //Khởi tạo biến document cho từng snapshot để có thể truy cập vào data chứa trong đó
                       Map<String, dynamic> document = snapshot.data!.docs[index]
                           .data() as Map<String, dynamic>;
 
@@ -105,12 +111,15 @@ class _HomePageState extends State<HomePage> {
                                       )));
                         },
                         child: TodoCard(
+                          // Giá trị của title sẽ là giá trị mà "title" chứa
                           title: document["title"],
                           iconButton: IconButton(
                             onPressed: () {
                               setState(() {
                                 idTodo = snapshot.data!.docs[index].id;
                               });
+                              // Sử dụng phương thức delele để xóa todo có id được chọn tương ứng
+                              // trong Firestore Database
                               FirebaseFirestore.instance
                                   .collection("Todo")
                                   .doc(idTodo)
@@ -127,12 +136,15 @@ class _HomePageState extends State<HomePage> {
                             ),
                             activeColor: Color.fromARGB(158, 139, 155, 225),
                             checkColor: Colors.white,
+                            // value sẽ bằng giá trị mà "status" chứa
                             value: document["status"],
                             onChanged: (value) {
                               bool flag = !document["status"];
                               setState(() {
                                 idTodo = snapshot.data!.docs[index].id;
                               });
+                              // Sử dụng phương thức update của FirebaseFirestore để
+                              // lưu trữ thông tin được thay đổi lên Firestore Database
                               FirebaseFirestore.instance
                                   .collection("Todo")
                                   .doc(idTodo)

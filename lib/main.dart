@@ -8,6 +8,7 @@ import 'settings/firebase_options.dart';
 // ...
 
 Future<void> main() async {
+  //Khai báo các thuộc tính bắt buộc khi ứng dụng có sử dụng Firebase
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -24,6 +25,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Widget currentPage = SignInPage();
+  // Khởi tạo biến authServices để truy cập vào class AuthServices
   AuthServices authServices = AuthServices();
 
   @override
@@ -32,6 +34,9 @@ class _MyAppState extends State<MyApp> {
     checkLogin();
   }
 
+  // Dùng phương thức getToken đã được xây dựng ở class AuthServices
+  // để check xem đã có token nào được lưu hay chưa, nếu đã có
+  // thì truy cập thẳng vào HomePage,
   checkLogin() async {
     String? token = await authServices.getToken();
     if (token != null) {

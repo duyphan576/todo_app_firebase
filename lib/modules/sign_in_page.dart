@@ -133,11 +133,13 @@ class _SignInPageState extends State<SignInPage> {
           circular = true;
         });
         try {
+          // Khai báo biến userCredential dùng để lưu thông tin khi sử dụng
+          // phương thức signInWithEmailAndPassword của package FirebaseAuth
           UserCredential userCredential =
               await firebaseAuth.signInWithEmailAndPassword(
                   email: _emailController.text, password: _pwdController.text);
+          // Lưu userCredential vào storage bằng phương thức storeTokenAndData của class AuthServices
           authServices.storeTokenAndData(userCredential);
-          print("${userCredential.user?.uid}");
           setState(() {
             circular = false;
           });
